@@ -12,6 +12,7 @@ import Element.Input as Input
 import Heart
 import Html exposing (Html)
 import Html.Attributes
+import Random
 import Time
 
 
@@ -55,6 +56,7 @@ type Msg
     | Check Bool
     | MouseDown
     | MouseUp
+    | GotParticles (List Particle)
 
 
 type PopStep
@@ -70,7 +72,25 @@ type ParticlesStep
 
 type alias Particle =
     { angle : Float
+    , distance : Float
+    , size : Float
+    , hue : Float
     }
+
+
+randomParticle : Random.Generator Particle
+randomParticle =
+    Random.map4 Particle
+        (Random.float 0 360.0)
+        (Random.float 50.0 100.0)
+        (Random.float 8.0 16.0)
+        (Random.float 200.0 360.0)
+
+
+randomParticleList : Int -> Random.Generator (List Particle)
+randomParticleList n =
+    randomParticle
+        |> Random.list n
 
 
 type alias Model =
@@ -106,8 +126,8 @@ subscriptions model =
     Animator.toSubscription Tick model animator
 
 
-updateHeart : Model -> Model
-updateHeart model =
+updateHeart : List Particle -> Model -> Model
+updateHeart particles model =
     let
         checked =
             model.checked |> Animator.current
@@ -124,17 +144,9 @@ updateHeart model =
         emitParticles =
             Animator.interrupt
                 [ Animator.event Animator.immediately ParticlesOrigin
-                , Animator.event Animator.verySlowly ParticlesEmmiting
+                , Animator.event Animator.slowly ParticlesEmmiting
                 , Animator.event Animator.immediately ParticlesAbsorb
                 ]
-
-        countOfParticles =
-            10
-
-        particles : List Particle
-        particles =
-            List.range 0 countOfParticles
-                |> List.map (\i -> { angle = (360.0 / toFloat countOfParticles) * toFloat i })
     in
     if not checked then
         { model
@@ -182,7 +194,12 @@ update msg model =
         MouseUp ->
             ( model
                 |> updatePressed False
-                |> updateHeart
+            , randomParticleList 30 |> Random.generate GotParticles
+            )
+
+        GotParticles particles ->
+            ( model
+                |> updateHeart particles
             , Cmd.none
             )
 
@@ -190,9 +207,6 @@ update msg model =
 viewParticle : Timeline ParticlesStep -> Particle -> Element msg
 viewParticle particlesStep particle =
     let
-        distance =
-            80.0
-
         size =
             8
     in
@@ -206,8 +220,8 @@ viewParticle particlesStep particle =
                         }
 
                     ParticlesEmmiting ->
-                        { x = Animator.at <| sin (degrees particle.angle) * distance
-                        , y = Animator.at <| cos (degrees particle.angle) * distance
+                        { x = Animator.arriveSmoothly 0 <| Animator.at <| sin (degrees particle.angle) * particle.distance
+                        , y = Animator.arriveSmoothly 0 <| Animator.at <| cos (degrees particle.angle) * particle.distance
                         }
 
                     ParticlesAbsorb ->
@@ -215,13 +229,24 @@ viewParticle particlesStep particle =
                         , y = Animator.at <| 0
                         }
             )
-         , AnimatorWrapper.singleton <| Background.color neonPink
-         , AnimatorWrapper.singleton <| Border.rounded <| round (size / 2)
-         , AnimatorWrapper.singleton <| width <| px size
-         , AnimatorWrapper.singleton <| height <| px size
+         , AnimatorWrapper.alpha particlesStep <|
+            \state ->
+                case state of
+                    ParticlesOrigin ->
+                        Animator.at 0
+
+                    ParticlesEmmiting ->
+                        Animator.at 0.3
+
+                    ParticlesAbsorb ->
+                        Animator.at 0
+         , AnimatorWrapper.singleton <| Border.rounded <| round (particle.size / 2)
+         , AnimatorWrapper.singleton <| width <| px <| round particle.size
+         , AnimatorWrapper.singleton <| height <| px <| round particle.size
+         , AnimatorWrapper.singleton <| htmlAttribute <| Html.Attributes.style "backgroundColor" ("hsl(" ++ String.fromFloat particle.hue ++ ", 60%, 60%)")
          , AnimatorWrapper.singleton <| htmlAttribute <| Html.Attributes.style "position" "absolute"
-         , AnimatorWrapper.singleton <| htmlAttribute <| Html.Attributes.style "left" "calc(50% + 8px)"
-         , AnimatorWrapper.singleton <| htmlAttribute <| Html.Attributes.style "top" "calc(50% + 8px)"
+         , AnimatorWrapper.singleton <| htmlAttribute <| Html.Attributes.style "left" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
+         , AnimatorWrapper.singleton <| htmlAttribute <| Html.Attributes.style "top" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
          ]
             |> AnimatorWrapper.batch
         )

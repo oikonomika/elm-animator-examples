@@ -1,6 +1,7 @@
-module AnimatorWrapper exposing (batch, color, singleton, xy)
+module AnimatorWrapper exposing (alpha, batch, color, singleton, xy)
 
 import Animator exposing (Movement, Timeline)
+import Animator.Inline
 import Color
 import Element
 
@@ -29,4 +30,11 @@ xy timeline lookup =
     in
     [ Element.moveRight x
     , Element.moveDown y
+    ]
+
+
+alpha : Timeline state -> (state -> Movement) -> List (Element.Attr () msg)
+alpha timeline lookup =
+    [ Element.htmlAttribute <|
+        Animator.Inline.opacity timeline lookup
     ]
