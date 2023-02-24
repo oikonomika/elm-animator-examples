@@ -206,10 +206,6 @@ update msg model =
 
 viewParticle : Timeline ParticlesStep -> Particle -> Element msg
 viewParticle particlesStep particle =
-    let
-        size =
-            8
-    in
     el
         ([ AnimatorWrapper.xy particlesStep
             (\state ->
