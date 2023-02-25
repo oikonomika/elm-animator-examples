@@ -1,9 +1,10 @@
-module Attrs exposing (alpha, color, xy)
+module Attrs exposing (alpha, color, hsl, xy)
 
 import Animator exposing (Movement, Timeline)
 import Animator.Inline
 import Color as RawColor
-import Element exposing (Attr, Color)
+import Element exposing (Attr, Color, htmlAttribute)
+import Html.Attributes as RawAttrs
 
 
 color : Timeline state -> (state -> Color) -> Color
@@ -28,3 +29,21 @@ alpha timeline lookup =
     [ Element.htmlAttribute <|
         Animator.Inline.opacity timeline lookup
     ]
+
+
+hsl : { hue : Float, saturation : Float, lightness : Float } -> Attr () msg
+hsl { hue, saturation, lightness } =
+    let
+        strHue =
+            String.fromFloat hue
+
+        strSaturation =
+            (String.fromFloat <| saturation * 100.0) ++ "%"
+
+        strLightness =
+            (String.fromFloat <| lightness * 100.0) ++ "%"
+
+        hslValue =
+            "hsl(" ++ strHue ++ ", " ++ strSaturation ++ ", " ++ strLightness ++ ")"
+    in
+    htmlAttribute <| RawAttrs.style "backgroundColor" hslValue

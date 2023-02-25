@@ -244,7 +244,7 @@ viewParticle particlesStep particle =
             [ Border.rounded <| round (particle.size / 2)
             , width <| px <| round particle.size
             , height <| px <| round particle.size
-            , htmlAttribute <| Html.Attributes.style "backgroundColor" ("hsl(" ++ String.fromFloat particle.hue ++ ", 60%, 60%)")
+            , Attrs.hsl { hue = particle.hue, saturation = 0.6, lightness = 0.6 }
             , htmlAttribute <| Html.Attributes.style "position" "absolute"
             , htmlAttribute <| Html.Attributes.style "left" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
             , htmlAttribute <| Html.Attributes.style "top" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
