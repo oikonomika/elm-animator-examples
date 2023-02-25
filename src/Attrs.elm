@@ -1,4 +1,4 @@
-module AnimatorWrapper exposing (alpha, batch, color, singleton, xy)
+module Attrs exposing (alpha, batch, color, singleton, xy)
 
 import Animator exposing (Movement, Timeline)
 import Animator.Inline

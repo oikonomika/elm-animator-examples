@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Animator exposing (Animator, Timeline)
-import AnimatorWrapper
+import Attrs
 import Browser
 import Element exposing (..)
 import Element.Background as Background
@@ -207,7 +207,7 @@ update msg model =
 viewParticle : Timeline ParticlesStep -> Particle -> Element msg
 viewParticle particlesStep particle =
     el
-        ([ AnimatorWrapper.xy particlesStep
+        ([ Attrs.xy particlesStep
             (\state ->
                 case state of
                     ParticlesOrigin ->
@@ -225,7 +225,7 @@ viewParticle particlesStep particle =
                         , y = Animator.at <| 0
                         }
             )
-         , AnimatorWrapper.alpha particlesStep <|
+         , Attrs.alpha particlesStep <|
             \state ->
                 case state of
                     ParticlesOrigin ->
@@ -236,15 +236,15 @@ viewParticle particlesStep particle =
 
                     ParticlesAbsorb ->
                         Animator.at 0
-         , AnimatorWrapper.singleton <| Border.rounded <| round (particle.size / 2)
-         , AnimatorWrapper.singleton <| width <| px <| round particle.size
-         , AnimatorWrapper.singleton <| height <| px <| round particle.size
-         , AnimatorWrapper.singleton <| htmlAttribute <| Html.Attributes.style "backgroundColor" ("hsl(" ++ String.fromFloat particle.hue ++ ", 60%, 60%)")
-         , AnimatorWrapper.singleton <| htmlAttribute <| Html.Attributes.style "position" "absolute"
-         , AnimatorWrapper.singleton <| htmlAttribute <| Html.Attributes.style "left" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
-         , AnimatorWrapper.singleton <| htmlAttribute <| Html.Attributes.style "top" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
+         , Attrs.singleton <| Border.rounded <| round (particle.size / 2)
+         , Attrs.singleton <| width <| px <| round particle.size
+         , Attrs.singleton <| height <| px <| round particle.size
+         , Attrs.singleton <| htmlAttribute <| Html.Attributes.style "backgroundColor" ("hsl(" ++ String.fromFloat particle.hue ++ ", 60%, 60%)")
+         , Attrs.singleton <| htmlAttribute <| Html.Attributes.style "position" "absolute"
+         , Attrs.singleton <| htmlAttribute <| Html.Attributes.style "left" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
+         , Attrs.singleton <| htmlAttribute <| Html.Attributes.style "top" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
          ]
-            |> AnimatorWrapper.batch
+            |> Attrs.batch
         )
         none
 
@@ -273,7 +273,7 @@ viewHeart model =
         ]
     <|
         Heart.view [] <|
-            AnimatorWrapper.color model.checked <|
+            Attrs.color model.checked <|
                 \state ->
                     if state then
                         neonPink
@@ -305,7 +305,7 @@ viewButton model =
         , Events.onMouseDown MouseDown
         , Events.onMouseUp MouseUp
         , Border.glow
-            (AnimatorWrapper.color model.pressed <|
+            (Attrs.color model.pressed <|
                 \state ->
                     if state then
                         blackAlpha2
