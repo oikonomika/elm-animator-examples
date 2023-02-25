@@ -300,7 +300,7 @@ viewLabel =
         , Font.center
         , Font.semiBold
         , Font.size 24
-        , htmlAttribute <| Html.Attributes.style "user-select" "none"
+        , Attrs.disabledTextSelection
         ]
     <|
         text "LIKE"

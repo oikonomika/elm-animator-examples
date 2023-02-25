@@ -1,4 +1,4 @@
-module Attrs exposing (alpha, centeredBy, color, hsl, xy)
+module Attrs exposing (alpha, centeredBy, color, disabledTextSelection, hsl, xy)
 
 import Animator exposing (Movement, Timeline)
 import Animator.Inline
@@ -55,3 +55,8 @@ centeredBy width height =
     , htmlAttribute <| RawAttrs.style "left" ("calc(50% + " ++ String.fromFloat width ++ "px)")
     , htmlAttribute <| RawAttrs.style "top" ("calc(50% + " ++ String.fromFloat height ++ "px)")
     ]
+
+
+disabledTextSelection : Attr () msg
+disabledTextSelection =
+    htmlAttribute <| RawAttrs.style "user-select" "none"
