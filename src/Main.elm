@@ -206,45 +206,54 @@ update msg model =
 
 viewParticle : Timeline ParticlesStep -> Particle -> Element msg
 viewParticle particlesStep particle =
+    let
+        xy =
+            Attrs.xy particlesStep
+                (\state ->
+                    case state of
+                        ParticlesOrigin ->
+                            { x = Animator.at 0
+                            , y = Animator.at 0
+                            }
+
+                        ParticlesEmmiting ->
+                            { x = Animator.arriveSmoothly 0 <| Animator.at <| sin (degrees particle.angle) * particle.distance
+                            , y = Animator.arriveSmoothly 0 <| Animator.at <| cos (degrees particle.angle) * particle.distance
+                            }
+
+                        ParticlesAbsorb ->
+                            { x = Animator.at <| 0
+                            , y = Animator.at <| 0
+                            }
+                )
+
+        alpha =
+            Attrs.alpha particlesStep <|
+                \state ->
+                    case state of
+                        ParticlesOrigin ->
+                            Animator.at 0
+
+                        ParticlesEmmiting ->
+                            Animator.at 0.3
+
+                        ParticlesAbsorb ->
+                            Animator.at 0
+
+        attrs =
+            [ Border.rounded <| round (particle.size / 2)
+            , width <| px <| round particle.size
+            , height <| px <| round particle.size
+            , htmlAttribute <| Html.Attributes.style "backgroundColor" ("hsl(" ++ String.fromFloat particle.hue ++ ", 60%, 60%)")
+            , htmlAttribute <| Html.Attributes.style "position" "absolute"
+            , htmlAttribute <| Html.Attributes.style "left" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
+            , htmlAttribute <| Html.Attributes.style "top" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
+            ]
+    in
     el
-        ([ Attrs.xy particlesStep
-            (\state ->
-                case state of
-                    ParticlesOrigin ->
-                        { x = Animator.at 0
-                        , y = Animator.at 0
-                        }
-
-                    ParticlesEmmiting ->
-                        { x = Animator.arriveSmoothly 0 <| Animator.at <| sin (degrees particle.angle) * particle.distance
-                        , y = Animator.arriveSmoothly 0 <| Animator.at <| cos (degrees particle.angle) * particle.distance
-                        }
-
-                    ParticlesAbsorb ->
-                        { x = Animator.at <| 0
-                        , y = Animator.at <| 0
-                        }
-            )
-         , Attrs.alpha particlesStep <|
-            \state ->
-                case state of
-                    ParticlesOrigin ->
-                        Animator.at 0
-
-                    ParticlesEmmiting ->
-                        Animator.at 0.3
-
-                    ParticlesAbsorb ->
-                        Animator.at 0
-         , Attrs.singleton <| Border.rounded <| round (particle.size / 2)
-         , Attrs.singleton <| width <| px <| round particle.size
-         , Attrs.singleton <| height <| px <| round particle.size
-         , Attrs.singleton <| htmlAttribute <| Html.Attributes.style "backgroundColor" ("hsl(" ++ String.fromFloat particle.hue ++ ", 60%, 60%)")
-         , Attrs.singleton <| htmlAttribute <| Html.Attributes.style "position" "absolute"
-         , Attrs.singleton <| htmlAttribute <| Html.Attributes.style "left" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
-         , Attrs.singleton <| htmlAttribute <| Html.Attributes.style "top" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
-         ]
-            |> Attrs.batch
+        (xy
+            ++ alpha
+            ++ attrs
         )
         none
 

@@ -1,4 +1,4 @@
-module Attrs exposing (alpha, batch, color, singleton, xy)
+module Attrs exposing (alpha, color, xy)
 
 import Animator exposing (Movement, Timeline)
 import Animator.Inline
@@ -10,16 +10,6 @@ color : Timeline state -> (state -> Color) -> Color
 color timeline lookup =
     Animator.color timeline (lookup >> Element.toRgb >> RawColor.fromRgba)
         |> (RawColor.toRgba >> Element.fromRgb)
-
-
-batch : List (List (Attr decorative msg)) -> List (Attr decorative msg)
-batch attrs =
-    List.concat attrs
-
-
-singleton : Attr decorative msg -> List (Attr decorative msg)
-singleton attr =
-    List.singleton attr
 
 
 xy : Timeline state -> (state -> { x : Movement, y : Movement }) -> List (Attr decorative msg)
