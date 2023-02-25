@@ -1,6 +1,7 @@
 module Main exposing (..)
 
 import Animator exposing (Animator, Timeline)
+import Anims
 import Attrs
 import Browser
 import Element exposing (..)
@@ -207,8 +208,8 @@ update msg model =
 viewParticle : Timeline ParticlesStep -> Particle -> Element msg
 viewParticle particlesStep particle =
     let
-        xy =
-            Attrs.xy particlesStep
+        animXy =
+            Anims.xy particlesStep
                 (\state ->
                     case state of
                         ParticlesOrigin ->
@@ -227,8 +228,8 @@ viewParticle particlesStep particle =
                             }
                 )
 
-        alpha =
-            Attrs.alpha particlesStep <|
+        animAlpha =
+            Anims.alpha particlesStep <|
                 \state ->
                     case state of
                         ParticlesOrigin ->
@@ -251,8 +252,8 @@ viewParticle particlesStep particle =
             ]
     in
     el
-        (xy
-            ++ alpha
+        (animXy
+            ++ animAlpha
             ++ center
             ++ attrs
         )
@@ -283,7 +284,7 @@ viewHeart model =
         ]
     <|
         Heart.view [] <|
-            Attrs.color model.checked <|
+            Anims.color model.checked <|
                 \state ->
                     if state then
                         neonPink
@@ -315,7 +316,7 @@ viewButton model =
         , Events.onMouseDown MouseDown
         , Events.onMouseUp MouseUp
         , Border.glow
-            (Attrs.color model.pressed <|
+            (Anims.color model.pressed <|
                 \state ->
                     if state then
                         blackAlpha2
