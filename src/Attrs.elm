@@ -2,27 +2,27 @@ module Attrs exposing (alpha, batch, color, singleton, xy)
 
 import Animator exposing (Movement, Timeline)
 import Animator.Inline
-import Color
-import Element
+import Color as RawColor
+import Element exposing (Attr, Color)
 
 
-color : Timeline state -> (state -> Element.Color) -> Element.Color
+color : Timeline state -> (state -> Color) -> Color
 color timeline lookup =
-    Animator.color timeline (lookup >> Element.toRgb >> Color.fromRgba)
-        |> (Color.toRgba >> Element.fromRgb)
+    Animator.color timeline (lookup >> Element.toRgb >> RawColor.fromRgba)
+        |> (RawColor.toRgba >> Element.fromRgb)
 
 
-batch : List (List (Element.Attr decorative msg)) -> List (Element.Attr decorative msg)
+batch : List (List (Attr decorative msg)) -> List (Attr decorative msg)
 batch attrs =
     List.concat attrs
 
 
-singleton : Element.Attr decorative msg -> List (Element.Attr decorative msg)
+singleton : Attr decorative msg -> List (Attr decorative msg)
 singleton attr =
     List.singleton attr
 
 
-xy : Timeline state -> (state -> { x : Movement, y : Movement }) -> List (Element.Attr decorative msg)
+xy : Timeline state -> (state -> { x : Movement, y : Movement }) -> List (Attr decorative msg)
 xy timeline lookup =
     let
         { x, y } =
@@ -33,7 +33,7 @@ xy timeline lookup =
     ]
 
 
-alpha : Timeline state -> (state -> Movement) -> List (Element.Attr () msg)
+alpha : Timeline state -> (state -> Movement) -> List (Attr () msg)
 alpha timeline lookup =
     [ Element.htmlAttribute <|
         Animator.Inline.opacity timeline lookup
