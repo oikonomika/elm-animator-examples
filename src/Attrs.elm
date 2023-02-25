@@ -1,4 +1,4 @@
-module Attrs exposing (alpha, color, hsl, xy)
+module Attrs exposing (alpha, centeredBy, color, hsl, xy)
 
 import Animator exposing (Movement, Timeline)
 import Animator.Inline
@@ -47,3 +47,11 @@ hsl { hue, saturation, lightness } =
             "hsl(" ++ strHue ++ ", " ++ strSaturation ++ ", " ++ strLightness ++ ")"
     in
     htmlAttribute <| RawAttrs.style "backgroundColor" hslValue
+
+
+centeredBy : Float -> Float -> List (Attr () msg)
+centeredBy width height =
+    [ htmlAttribute <| RawAttrs.style "position" "absolute"
+    , htmlAttribute <| RawAttrs.style "left" ("calc(50% + " ++ String.fromFloat width ++ "px)")
+    , htmlAttribute <| RawAttrs.style "top" ("calc(50% + " ++ String.fromFloat height ++ "px)")
+    ]

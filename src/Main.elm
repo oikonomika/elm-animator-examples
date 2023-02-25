@@ -240,19 +240,20 @@ viewParticle particlesStep particle =
                         ParticlesAbsorb ->
                             Animator.at 0
 
+        center =
+            Attrs.centeredBy particle.size particle.size
+
         attrs =
             [ Border.rounded <| round (particle.size / 2)
             , width <| px <| round particle.size
             , height <| px <| round particle.size
             , Attrs.hsl { hue = particle.hue, saturation = 0.6, lightness = 0.6 }
-            , htmlAttribute <| Html.Attributes.style "position" "absolute"
-            , htmlAttribute <| Html.Attributes.style "left" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
-            , htmlAttribute <| Html.Attributes.style "top" ("calc(50% + " ++ String.fromFloat particle.size ++ "px)")
             ]
     in
     el
         (xy
             ++ alpha
+            ++ center
             ++ attrs
         )
         none
