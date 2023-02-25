@@ -126,8 +126,8 @@ subscriptions model =
     Animator.toSubscription Tick model animator
 
 
-updateHeart : List Particle -> Model -> Model
-updateHeart particles model =
+playParticles : List Particle -> Model -> Model
+playParticles particles model =
     let
         checked =
             model.checked |> Animator.current
@@ -159,8 +159,8 @@ updateHeart particles model =
         model
 
 
-updateChecked : Bool -> Model -> Model
-updateChecked checked model =
+playCheck : Bool -> Model -> Model
+playCheck checked model =
     if checked then
         { model | checked = Animator.go Animator.slowly checked model.checked }
 
@@ -168,8 +168,8 @@ updateChecked checked model =
         { model | checked = Animator.go Animator.immediately checked model.checked }
 
 
-updatePressed : Bool -> Model -> Model
-updatePressed pressed model =
+playPress : Bool -> Model -> Model
+playPress pressed model =
     { model | pressed = Animator.go Animator.quickly pressed model.pressed }
 
 
@@ -181,25 +181,25 @@ update msg model =
 
         Check checked ->
             ( model
-                |> updateChecked checked
+                |> playCheck checked
             , Cmd.none
             )
 
         MouseDown ->
             ( model
-                |> updatePressed True
+                |> playPress True
             , Cmd.none
             )
 
         MouseUp ->
             ( model
-                |> updatePressed False
+                |> playPress False
             , randomParticleList 30 |> Random.generate GotParticles
             )
 
         GotParticles particles ->
             ( model
-                |> updateHeart particles
+                |> playParticles particles
             , Cmd.none
             )
 
