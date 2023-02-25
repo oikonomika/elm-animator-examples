@@ -1,4 +1,4 @@
-module Attrs exposing
+module Extensions.Attrs exposing
     ( centeredBy
     , disabledTextSelection
     , hsl

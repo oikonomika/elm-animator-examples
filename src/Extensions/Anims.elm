@@ -1,4 +1,4 @@
-module Anims exposing
+module Extensions.Anims exposing
     ( alpha
     , color
     , xy

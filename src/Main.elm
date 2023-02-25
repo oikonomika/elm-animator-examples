@@ -1,8 +1,6 @@
 module Main exposing (..)
 
 import Animator exposing (Animator, Timeline)
-import Anims
-import Attrs
 import Browser
 import Element exposing (..)
 import Element.Background as Background
@@ -10,6 +8,8 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
+import Extensions.Anims as Anims
+import Extensions.Attrs as Attrs
 import Heart
 import Html exposing (Html)
 import Random
