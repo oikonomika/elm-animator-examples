@@ -12,7 +12,6 @@ import Element.Font as Font
 import Element.Input as Input
 import Heart
 import Html exposing (Html)
-import Html.Attributes
 import Random
 import Time
 
